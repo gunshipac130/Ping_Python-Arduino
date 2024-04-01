@@ -5,7 +5,7 @@
 #include <Adafruit_GFX.h>      //SSD1306 OLED screen i2c
 #include <Adafruit_SSD1306.h>  //SSD1306 OLED screen i2c
 
-// WiFi Ping
+// Ping
 #define ping_array_size 106
 #define ping_array_big_size 3
 int ping_array[106];
@@ -13,9 +13,6 @@ int ping_array_big[3] = { 0, 0, 0 };
 unsigned long big_ping_timestamp = 0;
 int ping_ms = 0;
 
-//SSD1306 OLED screen i2c
-// nodemcu pin SCL=D1, SDA=D2
-// https://www.praphas.com/forum/index.php?topic=312.0
 #define SCREEN_WIDTH 128     // OLED display width, in pixels
 #define SCREEN_HEIGHT 32     // OLED display height, in pixels
 #define OLED_RESET -1        // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -47,24 +44,34 @@ void loop() {
 //
 
 int read_serial_ping() {
+  String str_rcv = ""; // string receive
+  String str_buffer = ""; // string buffer
+  int ping_int;
+  bool data_rcv_completion = false;
+  
   while (!Serial.available());
-  Serial.flush();
-  String incomingString = Serial.readStringUntil('z');
-  int Python_data = incomingString.toInt();
-  // Python_data = Serial.readString().toInt();
-  // String Python_data = Serial.readString();
-  // if (Python_data < 50) { // temporary fix for split serial text
-  //   int data_buffer = 0;
-  //   data_buffer = Python_data*10;
-  //   Python_data = Serial.readString().toInt();
-  //   Python_data = data_buffer + Python_data;
-  // }
-  Serial.flush();
-  Serial.print(Python_data);
-  Serial.print(" ok");
-  Serial.flush();
-  // delay(500);
-  return Python_data;
+  Serial.print("a");
+  str_rcv = Serial.readString();
+  Serial.print("b");
+  Serial.print(str_rcv);
+  
+  while (data_rcv_completion == false) {
+    Serial.print("data rcv = ");
+    Serial.print(str_rcv);
+    Serial.print("---");
+  
+    if (str_rcv[str_rcv.length()-1] == 'z') { // string terminator at last position; check if end with z
+      str_buffer += str_rcv;
+      Serial.print(str_buffer);
+      data_rcv_completion = true;
+    } else {
+      str_buffer += str_rcv;
+      str_rcv = "";
+      str_rcv = Serial.readString();
+    }
+  }
+  ping_int = str_buffer.toInt();
+  return ping_int;
 }
 
 void Job_Loop_Ping() {

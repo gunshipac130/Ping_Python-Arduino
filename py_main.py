@@ -7,7 +7,7 @@ Arduino = serial.Serial(port='COM4', baudrate=115200, timeout=.1)
 
 def Arduino_write_read(x): 
 	Arduino.write(bytes(x, 'utf-8')) 
-	time.sleep(0.05) 
+	time.sleep(0.05)
 	data = Arduino.readline().decode("utf-8")
 	return data
 
