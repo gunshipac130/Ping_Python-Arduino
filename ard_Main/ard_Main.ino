@@ -50,16 +50,9 @@ int read_serial_ping() {
   bool data_rcv_completion = false;
   
   while (!Serial.available());
-  Serial.print("a");
   str_rcv = Serial.readString();
-  Serial.print("b");
-  Serial.print(str_rcv);
   
   while (data_rcv_completion == false) {
-    Serial.print("data rcv = ");
-    Serial.print(str_rcv);
-    Serial.print("---");
-  
     if (str_rcv[str_rcv.length()-1] == 'z') { // string terminator at last position; check if end with z
       str_buffer += str_rcv;
       Serial.print(str_buffer);
