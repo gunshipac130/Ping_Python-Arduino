@@ -27,6 +27,7 @@ void setup() {
 
   // Initiate SSD1306 OLED screen 128*32 i2c
   Job_Setup_SSD1306();
+  Job_Setup_Python_Ping();
 }
 
 void loop() {
@@ -43,7 +44,7 @@ void loop() {
 //
 //
 
-int read_serial_ping() {
+int Work_read_serial_ping() {
   String str_rcv = ""; // string receive
   String str_buffer = ""; // string buffer
   int ping_int;
@@ -68,7 +69,7 @@ int read_serial_ping() {
 }
 
 void Job_Loop_Ping() {
-  ping_ms = read_serial_ping();
+  ping_ms = Work_read_serial_ping();
 
   if (ping_ms > 0) {
     if (ping_ms <= 999) {
@@ -120,6 +121,26 @@ void Job_Setup_SSD1306() {
   delay(1000);
   OLEDscreen_128x32.clearDisplay();
   OLEDscreen_128x32.display();
+}
+
+void Job_Setup_Python_Ping() {
+  int connect_wait_time = 0;
+  int time_buffer;
+  time_buffer = millis();
+  while (!Serial.available()) {
+    OLEDscreen_128x32.clearDisplay();
+    OLEDscreen_128x32.setTextSize(1);
+    OLEDscreen_128x32.setTextColor(WHITE, BLACK);
+    OLEDscreen_128x32.setCursor(8, 12);
+    OLEDscreen_128x32.print(F("Wait for Ping... "));
+    if (millis() - time_buffer >= 1000) {
+      OLEDscreen_128x32.setCursor(108, 12);
+      OLEDscreen_128x32.printf("%2d\n", connect_wait_time);
+      connect_wait_time = connect_wait_time + 1;
+      OLEDscreen_128x32.display();
+      time_buffer = millis();
+    }
+  }
 }
 
 void Job_Loop_SSD1306() {

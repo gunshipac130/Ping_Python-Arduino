@@ -4,6 +4,7 @@ import time
 import serial 
 
 Arduino = serial.Serial(port='COM4', baudrate=115200, timeout=.1) 
+ping_host = '119.252.37.11'
 
 def Arduino_write_read(x): 
 	Arduino.write(bytes(x, 'utf-8')) 
@@ -16,7 +17,8 @@ time_a = time.perf_counter()
 while True:
     if time.perf_counter() - time_a >= 1:
         # ping_process = subprocess.Popen(["ping.exe","192.168.13.19","-n","1"], stdout = subprocess.PIPE)
-        ping_process = subprocess.Popen(["ping.exe","119.252.37.13","-n","1"], stdout = subprocess.PIPE)
+        ping_process = subprocess.Popen(['ping.exe',ping_host,'-n','1'], stdout = subprocess.PIPE)
+        print(f'\nPinging {ping_host}')
         ping_string = ping_process.communicate()[0].decode("utf-8")
         ping_match = re.findall(r'time[=<](\d+)ms', ping_string)
         if ping_match != []:
